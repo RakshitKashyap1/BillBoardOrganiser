@@ -1,50 +1,50 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Monitor, User, Megaphone, ShieldCheck, Lock, Mail } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Monitor, User, Megaphone, Lock, Mail, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Spinner from '../../components/common/Spinner';
 
-export default function Login() {
-    const { login } = useAuth();
+export default function Register() {
+    const { register } = useAuth();
     const navigate = useNavigate();
-    
+
     const [role, setRole] = useState('advertiser');
-    const [email, setEmail] = useState('advertiser@bbo.com');
-    const [password, setPassword] = useState('advertiser123');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleRoleSelect = (selectedRole) => {
         setRole(selectedRole);
         setError('');
-        if (selectedRole === 'advertiser') {
-            setEmail('advertiser@bbo.com');
-            setPassword('advertiser123');
-        } else if (selectedRole === 'owner') {
-            setEmail('owner@bbo.com');
-            setPassword('owner123');
-        } else {
-            setEmail('admin@bbo.com');
-            setPassword('admin123');
-        }
     };
 
-    const handleLogin = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
-        setIsLoading(true);
 
-        const result = await login(email, password);
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            toast.error("Passwords do not match");
+            return;
+        }
+
+        setIsLoading(true);
+        const result = await register(name, email, password, role);
 
         if (result.success) {
-            toast.success(`Successfully logged in as ${role}`);
-            if (role === 'advertiser') navigate('/advertiser/dashboard');
-            else if (role === 'owner') navigate('/owner/dashboard');
-            else navigate('/admin/dashboard');
+            toast.success(`Successfully registered and logged in as ${role}!`);
+            if (role === 'advertiser') {
+                navigate('/advertiser/dashboard');
+            } else {
+                navigate('/owner/dashboard');
+            }
         } else {
             setError(result.error);
-            toast.error(result.error || "Login failed");
+            toast.error(result.error || "Registration failed");
         }
         setIsLoading(false);
     };
@@ -55,8 +55,8 @@ export default function Login() {
                 
                 <div className="text-center mb-8">
                     <Monitor size={48} className="text-primary mb-4 mx-auto" style={{ margin: '0 auto 1rem' }} />
-                    <h2>Welcome Back</h2>
-                    <p>Login to your account</p>
+                    <h2>Create Account</h2>
+                    <p>Join BBO. to list or book spaces</p>
                 </div>
 
                 {error && (
@@ -65,12 +65,12 @@ export default function Login() {
                     </div>
                 )}
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleRegister}>
                     <div className="split-layout-container">
                         {/* Left Column - Roles Column */}
                         <div>
                             <div className="form-group mb-6">
-                                <label className="form-label" style={{ marginBottom: '1rem' }}>Select Persona (Auto-fills Credentials)</label>
+                                <label className="form-label" style={{ marginBottom: '1rem' }}>Select Role</label>
                                 <div className="grid grid-cols-1 gap-3">
                                     <label
                                         className={`card p-3 flex items-center gap-3 cursor-pointer transition ${role === 'advertiser' ? 'border-primary' : ''}`}
@@ -99,20 +99,6 @@ export default function Login() {
                                         </div>
                                         {role === 'owner' && <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--primary)' }}></div>}
                                     </label>
-
-                                    <label
-                                        className={`card p-3 flex items-center gap-3 cursor-pointer transition ${role === 'admin' ? 'border-primary' : ''}`}
-                                        style={{ borderColor: role === 'admin' ? 'var(--primary)' : 'var(--border)', padding: '0.75rem' }}
-                                        onClick={() => handleRoleSelect('admin')}
-                                    >
-                                        <div style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: role === 'admin' ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.05)', color: role === 'admin' ? 'var(--primary)' : 'var(--text-muted)' }}>
-                                            <ShieldCheck size={20} />
-                                        </div>
-                                        <div style={{ flex: 1 }}>
-                                            <h3 style={{ fontSize: '0.9rem', margin: 0 }}>Administrator</h3>
-                                        </div>
-                                        {role === 'admin' && <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--primary)' }}></div>}
-                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -121,6 +107,22 @@ export default function Login() {
                         <div className="split-layout-divider flex flex-col justify-between">
                             <div>
                                 <div className="form-group mb-4">
+                                    <label className="form-label">Full Name</label>
+                                    <div style={{ position: 'relative' }}>
+                                        <User size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            style={{ paddingLeft: '2.5rem' }}
+                                            placeholder="John Doe"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group mb-4">
                                     <label className="form-label">Email Address</label>
                                     <div style={{ position: 'relative' }}>
                                         <Mail size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -128,6 +130,7 @@ export default function Login() {
                                             type="email"
                                             className="form-input"
                                             style={{ paddingLeft: '2.5rem' }}
+                                            placeholder="john@example.com"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             required
@@ -135,7 +138,7 @@ export default function Login() {
                                     </div>
                                 </div>
 
-                                <div className="form-group mb-8">
+                                <div className="form-group mb-4">
                                     <label className="form-label">Password</label>
                                     <div style={{ position: 'relative' }}>
                                         <Lock size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -143,17 +146,45 @@ export default function Login() {
                                             type="password"
                                             className="form-input"
                                             style={{ paddingLeft: '2.5rem' }}
+                                            placeholder="••••••••"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
                                         />
                                     </div>
                                 </div>
+
+                                <div className="form-group mb-8">
+                                    <label className="form-label">Confirm Password</label>
+                                    <div style={{ position: 'relative' }}>
+                                        <ShieldCheck size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                        <input
+                                            type="password"
+                                            className="form-input"
+                                            style={{ paddingLeft: '2.5rem' }}
+                                            placeholder="••••••••"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
-                            <button type="submit" className="btn btn-primary w-full" style={{ padding: '0.875rem' }} disabled={isLoading}>
-                                {isLoading ? <Spinner size="sm" color="white" /> : 'Sign In'}
-                            </button>
+                            <div>
+                                <button type="submit" className="btn btn-primary w-full mb-6" style={{ padding: '0.875rem' }} disabled={isLoading}>
+                                    {isLoading ? <Spinner size="sm" color="white" /> : 'Sign Up'}
+                                </button>
+
+                                <div className="text-center">
+                                    <p style={{ fontSize: '0.9rem', margin: 0 }}>
+                                        Already have an account?{' '}
+                                        <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 750, textDecoration: 'underline' }}>
+                                            Sign In
+                                        </Link>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -161,4 +192,3 @@ export default function Login() {
         </div>
     );
 }
-

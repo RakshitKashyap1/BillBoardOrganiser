@@ -1,10 +1,10 @@
-# 🏙️ Billboard Organiser (BBO) - The "Where Did I Put That Giant Sign?" Manager
+# 🏙️ BBO - The "Where Did I Put That Giant Sign?" Manager
 
 ![BBO Banner](./bbo_banner_1772393168934.png)
 
 **The Ultimate Bridge Between Brands and Billboards. No safety harness required.**
 
-Billboard Organiser (BBO.) is a high-performance, role-based platform designed to revolutionise the billboard advertising industry. Built with a striking **Neo-Brutalist aesthetic**, it's the only app that looks as bold as a 40-foot sign on the highway. We help advertisers, asset owners, and administrators manage high-visibility spaces without the high-visibility headaches.
+ BBO is a high-performance, role-based platform designed to revolutionise the billboard advertising industry. Built with a striking **Neo-Brutalist aesthetic**, it's the only app that looks as bold as a 40-foot sign on the highway. We help advertisers, asset owners, and administrators manage high-visibility spaces without the high-visibility headaches.
 
 ---
 

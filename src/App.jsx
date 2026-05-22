@@ -22,6 +22,7 @@ import Home from './pages/public/Home';
 import Search from './pages/public/Search';
 import AdDetails from './pages/public/AdDetails';
 import Login from './pages/public/Login';
+import Register from './pages/public/Register';
 
 // Advertiser Pages
 import AdvertiserDashboard from './pages/advertiser/Dashboard';
@@ -125,7 +126,7 @@ export default function App() {
                         <Route path="/search" element={<Search />} />
                         <Route path="/ad/:id" element={<AdDetails />} />
                         <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<MockPage title="Register" />} />
+                        <Route path="/register" element={<Register />} />
                     </Route>
 
                     {/* 

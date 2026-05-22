@@ -41,6 +41,29 @@ export function AuthProvider({ children }) {
         }
     };
 
+    const register = async (name, email, password, role) => {
+        try {
+            await api.post('/auth/register/', { name, email, password, role });
+            // Auto-login after successful registration
+            return await login(email, password);
+        } catch (error) {
+            console.error("Registration failed:", error);
+            // Collect error details from serializer validators if present
+            let errorMsg = "Registration failed - please check your details";
+            if (error.response?.data) {
+                if (typeof error.response.data === 'object') {
+                    // Flatten arrays of error messages from fields (e.g. {email: ["A user with this email already exists."]})
+                    errorMsg = Object.entries(error.response.data)
+                        .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(' ') : val}`)
+                        .join(' | ');
+                } else if (typeof error.response.data === 'string') {
+                    errorMsg = error.response.data;
+                }
+            }
+            return { success: false, error: errorMsg };
+        }
+    };
+
     const logout = () => {
         setUser(null);
         localStorage.removeItem('token');
@@ -57,7 +80,7 @@ export function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, register, loading }}>
             {children}
         </AuthContext.Provider>
     );

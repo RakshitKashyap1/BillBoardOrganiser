@@ -4,8 +4,8 @@
  * It includes a sticky NavBar and a Footer, with a dynamic content area in the middle.
  */
 
-import React, { useState, useEffect } from "react";
-import { Outlet, Link, useLocation, useNavigate, NavLink } from "react-router-dom";
+import React from "react";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Monitor, LogOut, Menu, X } from "lucide-react";
 import Footer from "../components/common/Footer";
@@ -17,18 +17,8 @@ import Footer from "../components/common/Footer";
 export default function PublicLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   /**
    * handleLogout: Clears the auth session and redirects the user to the home page.
@@ -57,7 +47,7 @@ export default function PublicLayout() {
   return (
     <div className="flex-col min-h-screen">
       {/* Global Navigation Bar */}
-      <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+      <nav className="navbar">
         <div className="container navbar-container">
           {/* Brand Logo & Name */}
           <Link to="/" className="navbar-brand">
@@ -76,24 +66,20 @@ export default function PublicLayout() {
 
           {/* Navigation Links */}
           <div className={`navbar-links ${isMenuOpen ? "mobile-open" : ""}`}>
-            <NavLink 
-              to="/search" 
-              className={({ isActive }) => `navbar-link ${isActive ? "active" : ""}`} 
-              onClick={closeMenu}
-            >
+            <Link to="/search" className="navbar-link" onClick={closeMenu}>
               Explore Ad Spaces
-            </NavLink>
+            </Link>
 
             {/* Conditional Rendering based on Authentication state */}
             {user ? (
               <>
-                <NavLink
+                <Link
                   to={dashboardLink()}
-                  className={({ isActive }) => `navbar-link ${isActive ? "active" : ""}`}
+                  className="navbar-link"
                   onClick={closeMenu}
                 >
                   Dashboard
-                </NavLink>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="btn btn-secondary nav-btn"
@@ -104,20 +90,16 @@ export default function PublicLayout() {
               </>
             ) : (
               <>
-                <NavLink 
-                  to="/login" 
-                  className={({ isActive }) => `navbar-link ${isActive ? "active" : ""}`} 
-                  onClick={closeMenu}
-                >
+                <Link to="/login" className="navbar-link" onClick={closeMenu}>
                   Login
-                </NavLink>
-                <NavLink
+                </Link>
+                <Link
                   to="/register"
-                  className={({ isActive }) => `btn btn-primary nav-btn ${isActive ? "active" : ""}`}
+                  className="btn btn-primary nav-btn"
                   onClick={closeMenu}
                 >
                   Sign up
-                </NavLink>
+                </Link>
               </>
             )}
           </div>
