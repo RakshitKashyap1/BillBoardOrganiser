@@ -37,23 +37,12 @@ import OwnerDashboard from './pages/owner/Dashboard';
 import OwnerBookings from './pages/owner/Bookings';
 import OwnerAdSpaces from './pages/owner/AdSpaces';
 import OwnerAddAdSpace from './pages/owner/AddAdSpace';
+import OwnerEarnings from './pages/owner/Earnings';
+import OwnerProfile from './pages/owner/Profile';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
-
-/**
- * MockPage: A utility component used to render a placeholder page for routes 
- * that haven't been fully individualised yet.
- * @param {string} title - The title of the page to display.
- */
-const MockPage = ({ title }) => (
-    <div className="animate-fade-in">
-        <h1 className="mb-8">{title}</h1>
-        <div className="card">
-            <p>This is the <strong>{title}</strong> page for the demo.</p>
-        </div>
-    </div>
-);
+import AdminReports from './pages/admin/Reports';
 
 // Generic Data Manager for formerly MockPages
 const DataDashboard = ({ title, icon: Icon, endpoint, columns }) => {
@@ -160,8 +149,8 @@ export default function App() {
                             <Route path="/owner/adspaces" element={<OwnerAdSpaces />} />
                             <Route path="/owner/add-adspace" element={<OwnerAddAdSpace />} />
                             <Route path="/owner/bookings" element={<OwnerBookings />} />
-                            <Route path="/owner/earnings" element={<MockPage title="Earnings Report" />} />
-                            <Route path="/owner/profile" element={<MockPage title="Owner Profile" />} />
+                            <Route path="/owner/earnings" element={<OwnerEarnings />} />
+                            <Route path="/owner/profile" element={<OwnerProfile />} />
                         </Route>
                     </Route>
 
@@ -226,7 +215,7 @@ export default function App() {
                                     ]}
                                 />
                             } />
-                            <Route path="/admin/reports" element={<MockPage title="System Reports" />} />
+                            <Route path="/admin/reports" element={<AdminReports />} />
                         </Route>
                     </Route>
 
