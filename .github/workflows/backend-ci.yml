@@ -96,3 +96,12 @@ jobs:
           tags: bbo-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Trigger Render Deploy
+        # Trigger Render deployment using the deploy hook URL stored in GitHub Secrets
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
