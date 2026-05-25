@@ -103,5 +103,11 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Trigger Render Deploy
-        # Trigger Render deployment using the deploy hook URL stored in GitHub Secrets
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        env:
+          RENDER_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_URL" ]; then
+            echo "Deployment skipped: RENDER_DEPLOY_HOOK_URL secret is not set."
+            exit 0
+          fi
+          curl -X POST "$RENDER_URL"
