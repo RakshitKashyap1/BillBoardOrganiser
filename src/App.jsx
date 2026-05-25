@@ -27,6 +27,10 @@ import Register from './pages/public/Register';
 // Advertiser Pages
 import AdvertiserDashboard from './pages/advertiser/Dashboard';
 import AdvertiserBookings from './pages/advertiser/Bookings';
+import AdvertiserCampaigns from './pages/advertiser/Campaigns';
+import AdvertiserUploadCreative from './pages/advertiser/UploadCreative';
+import AdvertiserReports from './pages/advertiser/Reports';
+import AdvertiserProfile from './pages/advertiser/Profile';
 
 // Owner Pages
 import OwnerDashboard from './pages/owner/Dashboard';
@@ -138,10 +142,10 @@ export default function App() {
                         <Route element={<DashboardLayout />}>
                             <Route path="/advertiser/dashboard" element={<AdvertiserDashboard />} />
                             <Route path="/advertiser/bookings" element={<AdvertiserBookings />} />
-                            <Route path="/advertiser/campaigns" element={<MockPage title="My Campaigns" />} />
-                            <Route path="/advertiser/upload-creative" element={<MockPage title="Upload Creative" />} />
-                            <Route path="/advertiser/reports" element={<MockPage title="Campaign Reports" />} />
-                            <Route path="/advertiser/profile" element={<MockPage title="Advertiser Profile" />} />
+                            <Route path="/advertiser/campaigns" element={<AdvertiserCampaigns />} />
+                            <Route path="/advertiser/upload-creative" element={<AdvertiserUploadCreative />} />
+                            <Route path="/advertiser/reports" element={<AdvertiserReports />} />
+                            <Route path="/advertiser/profile" element={<AdvertiserProfile />} />
                         </Route>
                     </Route>
 
