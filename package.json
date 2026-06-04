@@ -10,6 +10,8 @@
     "start": "npm run build && npm run preview"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2",
     "axios": "^1.13.6",
     "lucide-react": "^0.292.0",
     "react": "^18.2.0",
