@@ -527,8 +527,6 @@ tbody tr:hover td {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background-image: radial-gradient(var(--border) 1px, transparent 1px);
-  background-size: 30px 30px;
   background-color: var(--bg-main);
 }
 
@@ -763,8 +761,6 @@ tbody tr:hover td {
   justify-content: center;
   position: relative;
   text-align: center;
-  background-image: radial-gradient(var(--border) 1px, transparent 1px);
-  background-size: 30px 30px;
 }
 
 .hero-glow {
