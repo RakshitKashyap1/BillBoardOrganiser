@@ -21,6 +21,7 @@ class AdSpace(models.Model):
     city = models.CharField(max_length=100)
     
     # Specifications
+    image = models.ImageField(upload_to='adspaces/', null=True, blank=True)
     type = models.CharField(max_length=50)      # e.g., 'Digital', 'Static', 'LED Wrap'
     width = models.DecimalField(max_digits=10, decimal_places=2)  # In feet
     height = models.DecimalField(max_digits=10, decimal_places=2) # In feet

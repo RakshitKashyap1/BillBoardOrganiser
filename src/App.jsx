@@ -148,6 +148,7 @@ export default function App() {
                             <Route path="/owner/dashboard" element={<OwnerDashboard />} />
                             <Route path="/owner/adspaces" element={<OwnerAdSpaces />} />
                             <Route path="/owner/add-adspace" element={<OwnerAddAdSpace />} />
+                            <Route path="/owner/edit-adspace/:id" element={<OwnerAddAdSpace />} />
                             <Route path="/owner/bookings" element={<OwnerBookings />} />
                             <Route path="/owner/earnings" element={<OwnerEarnings />} />
                             <Route path="/owner/profile" element={<OwnerProfile />} />

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { useNavigate } from 'react-router-dom';
-import { Layout, MapPin, DollarSign, ArrowLeft, Loader2 } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Layout, MapPin, DollarSign, ArrowLeft, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Spinner from '../../components/common/Spinner';
 
 export default function AddAdSpace() {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEditMode = Boolean(id);
     const [isLoading, setIsLoading] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
     const [formData, setFormData] = useState({
         location: '',
         city: '',
@@ -19,20 +23,65 @@ export default function AddAdSpace() {
         availabilityStatus: 'available'
     });
 
+    useEffect(() => {
+        if (isEditMode) {
+            const fetchAdSpace = async () => {
+                try {
+                    const response = await api.get(`/adspaces/${id}/`);
+                    setFormData(response.data);
+                    if (response.data.image) {
+                        setImagePreview(response.data.image);
+                    }
+                } catch (error) {
+                    toast.error("Failed to fetch ad space details.");
+                    navigate('/owner/adspaces');
+                }
+            };
+            fetchAdSpace();
+        }
+    }, [id, isEditMode, navigate]);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await api.post('/adspaces/', formData);
-            toast.success("Ad space listed successfully!");
+            const submitData = new FormData();
+            Object.keys(formData).forEach(key => {
+                if (key !== 'image' && formData[key] !== null) {
+                    submitData.append(key, formData[key]);
+                }
+            });
+            if (imageFile) {
+                submitData.append('image', imageFile);
+            }
+
+            if (isEditMode) {
+                await api.put(`/adspaces/${id}/`, submitData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                toast.success("Ad space updated successfully!");
+            } else {
+                await api.post('/adspaces/', submitData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                toast.success("Ad space listed successfully!");
+            }
             navigate('/owner/adspaces');
         } catch (error) {
-            console.error("Failed to add ad space:", error);
-            const errorMsg = error.response?.data?.error || "Error adding ad space. Please check your inputs.";
+            console.error("Failed to save ad space:", error);
+            const errorMsg = error.response?.data?.error || "Error saving ad space. Please check your inputs.";
             toast.error(errorMsg);
         } finally {
             setIsLoading(false);
@@ -46,10 +95,47 @@ export default function AddAdSpace() {
             </button>
 
             <div className="card">
-                <h1 className="mb-2">List New Ad Space</h1>
-                <p className="text-muted mb-8">Enter the details of your billboard or digital hoarding.</p>
+                <h1 className="mb-2">{isEditMode ? 'Edit Ad Space' : 'List New Ad Space'}</h1>
+                <p className="text-muted mb-8">{isEditMode ? 'Update the details of your ad space.' : 'Enter the details of your billboard or digital hoarding.'}</p>
 
                 <form onSubmit={handleSubmit}>
+                    <div className="mb-6 form-group">
+                        <label className="form-label">Ad Space Image</label>
+                        <div 
+                            className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors"
+                            style={{ 
+                                borderColor: 'var(--border)', 
+                                backgroundColor: 'var(--bg-main)',
+                                minHeight: '200px',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}
+                            onClick={() => document.getElementById('image-upload').click()}
+                        >
+                            {imagePreview ? (
+                                <>
+                                    <img src={imagePreview} alt="Preview" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0 }} className="hover:opacity-100 transition-opacity text-white">
+                                        <p className="font-bold flex items-center gap-2"><ImageIcon size={20} /> Change Image</p>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center text-muted flex flex-col items-center gap-2">
+                                    <ImageIcon size={32} />
+                                    <p>Click to upload an image of the billboard</p>
+                                </div>
+                            )}
+                            <input 
+                                id="image-upload" 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden" 
+                                onChange={handleImageChange} 
+                                style={{ display: 'none' }}
+                            />
+                        </div>
+                    </div>
+
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="col-span-full form-group">
                             <label className="form-label">Location / Building Name</label>
@@ -157,7 +243,7 @@ export default function AddAdSpace() {
                     <div className="mt-8 flex justify-end gap-4 border-t pt-8" style={{ borderTop: '1px solid var(--border)' }}>
                         <button type="button" onClick={() => navigate(-1)} className="btn btn-secondary">Cancel</button>
                         <button type="submit" className="btn btn-primary px-8 flex items-center gap-2" disabled={isLoading}>
-                            {isLoading ? <Spinner size="sm" color="white" /> : 'List Space'}
+                            {isLoading ? <Spinner size="sm" color="white" /> : (isEditMode ? 'Save Changes' : 'List Space')}
                         </button>
                     </div>
                 </form>

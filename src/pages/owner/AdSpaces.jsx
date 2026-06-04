@@ -8,6 +8,7 @@ import Spinner from '../../components/common/Spinner';
 export default function ManageAdSpaces() {
     const [spaces, setSpaces] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [spaceToDelete, setSpaceToDelete] = useState(null);
 
     useEffect(() => {
         fetchSpaces();
@@ -25,13 +26,14 @@ export default function ManageAdSpaces() {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this ad space?")) return;
         try {
             await api.delete(`/adspaces/${id}/`);
             toast.success("Ad space deleted successfully");
+            setSpaceToDelete(null);
             fetchSpaces();
         } catch (error) {
             toast.error("Failed to delete ad space. It might have active bookings.");
+            setSpaceToDelete(null);
         }
     };
 
@@ -57,7 +59,7 @@ export default function ManageAdSpaces() {
                         <div key={space.id} className="card p-0 overflow-hidden group">
                             <div style={{ position: 'relative' }}>
                                 <img 
-                                    src={`https://images.unsplash.com/photo-1542289139-441639c0d4dd?auto=format&fit=crop&q=80&w=800`} 
+                                    src={space.image || `https://images.unsplash.com/photo-1542289139-441639c0d4dd?auto=format&fit=crop&q=80&w=800`} 
                                     alt={space.location} 
                                     style={{ width: '100%', height: '160px', objectFit: 'cover' }} 
                                 />
@@ -78,11 +80,15 @@ export default function ManageAdSpaces() {
                                         <span className="text-xs text-muted"> / day</span>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button className="btn btn-secondary" style={{ padding: '6px', borderRadius: 'var(--radius-sm)' }}>
+                                        <Link 
+                                            to={`/owner/edit-adspace/${space.id}`}
+                                            className="btn btn-secondary" 
+                                            style={{ padding: '6px', borderRadius: 'var(--radius-sm)' }}
+                                        >
                                             <Edit2 size={16} />
-                                        </button>
+                                        </Link>
                                         <button 
-                                            onClick={() => handleDelete(space.id)}
+                                            onClick={() => setSpaceToDelete(space.id)}
                                             className="btn" 
                                             style={{ padding: '6px', borderRadius: 'var(--radius-sm)', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)' }}
                                         >
@@ -102,6 +108,29 @@ export default function ManageAdSpaces() {
                     </div>
                 )}
             </div>
+
+            {spaceToDelete && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in" style={{ backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+                    <div className="bg-panel border-2 border-black rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl" style={{ backgroundColor: 'var(--bg-panel)', border: '2px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '1.5rem', maxWidth: '400px', width: '100%', boxShadow: 'var(--shadow-md)' }}>
+                        <h3 className="mb-2 text-xl font-bold">Delete Ad Space</h3>
+                        <p className="mb-6 text-muted">Are you sure you want to delete this ad space? This action cannot be undone.</p>
+                        <div className="flex justify-end gap-3">
+                            <button 
+                                className="btn btn-secondary" 
+                                onClick={() => setSpaceToDelete(null)}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                className="btn btn-danger" 
+                                onClick={() => handleDelete(spaceToDelete)}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

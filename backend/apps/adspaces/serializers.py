@@ -10,6 +10,6 @@ class AdSpaceSerializer(serializers.ModelSerializer):
         model = AdSpace
         fields = (
             'id', 'owner', 'location', 'city', 'type', 'width', 'height', 
-            'basePricePerDay', 'availabilityStatus', 'footfallEstimate'
+            'basePricePerDay', 'availabilityStatus', 'footfallEstimate', 'image'
         )
         read_only_fields = ('owner',)
